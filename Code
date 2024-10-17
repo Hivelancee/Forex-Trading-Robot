@@ -1,0 +1,33 @@
+
+```python
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+
+# Load historical forex data
+data = pd.read_csv('forex_data.csv')
+
+# Feature engineering
+data['momentum'] = data['close'].diff()
+data['rsi'] = talib.RSI(data['close'], timeperiod=14)
+data['macd'], data['signal'], data['hist'] = talib.MACD(data['close'], fastperiod=12, slowperiod=26, signalperiod=9)
+
+# Split data into training and testing sets
+X_train = data[:-100][['momentum', 'rsi', 'macd', 'signal', 'hist']]
+y_train = data[:-100]['close']
+X_test = data[-100:][['momentum', 'rsi', 'macd', 'signal', 'hist']]
+y_test = data[-100:]['close']
+
+# Train the random forest model
+model = RandomForestRegressor(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+print(f'Mean Squared Error: {mean_squared_error(y_test, y_pred)}')
+print(f'R-squared: {r2_score(y_test, y_pred)}')
+```
+
+This code snippet demonstrates the use of a Random Forest Regressor model to predict forex prices based on technical indicators like momentum, RSI, and MACD. The model is trained on historical forex data and then evaluated on a test set. This type of approach can be a starting point for building a more sophisticated forex trading bot.
